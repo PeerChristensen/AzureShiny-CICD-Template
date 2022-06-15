@@ -16,11 +16,11 @@ jobs:
     with:
       short_name: sgs-shiny
       environment: prd
-      resource_group: {{ cookiecutter.dev_rg }}
+      resource_group: R-Platform
       acr_name: sgsshinyprdcreg
       vm_size: B1
       build_number: ${{ github.run_number }}
       
     secrets:
-      azure_credentials: {{ "${{" }} secrets.{{cookiecutter.service_principal_name}} {{ "}}" }}
-      subscription_id: {{  "${{" }} secrets.{{ cookiecutter.subscription_id_name }} {{ "}}"  }}
+      azure_credentials: ${{ secrets.cutter.service_principal_name}}  }}
+      subscription_id: ${{ secrets.subscription_id_name }}
