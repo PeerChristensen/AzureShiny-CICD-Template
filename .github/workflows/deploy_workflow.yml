@@ -22,5 +22,5 @@ jobs:
       build_number: ${{ github.run_number }}
       
     secrets:
-      azure_credentials: ${{ secrets.cutter.service_principal_name}}  }}
-      subscription_id: ${{ secrets.subscription_id_name }}
+      azure_credentials: ${{ secrets.AZURE_SEGES_DS_GRIS }}
+      subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
