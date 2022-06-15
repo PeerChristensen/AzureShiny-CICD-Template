@@ -36,7 +36,7 @@ jobs:
     environment: ${{ inputs.environment }}
     steps:
       - uses: actions/checkout@v2
-      
+
       - uses: azure/login@v1
         with:
           creds: ${{ secrets.azure_credentials }}
@@ -90,10 +90,7 @@ jobs:
         run: |
           full_image_name=${{ inputs.acr_name }}.azurecr.io/${{ inputs.short_name }}-${{ inputs.environment }}-image:${{ inputs.build_number }}
           docker build -t $full_image_name \
-            -f Dockerfile . \
-            --build-arg api_username=${{ secrets.api_username }} \
-            --build-arg api_password=${{ secrets.api_password }} \
-            --build-arg build_number=${{ inputs.build_number }} 
+            -f Dockerfile .
           docker push $full_image_name
     
     outputs:
@@ -118,7 +115,7 @@ jobs:
         with:
           subscriptionId: ${{ secrets.subscription_id }}
           resourceGroupName: ${{ inputs.resource_group }}
-          template: bicep/inference.bicep
+          template: bicep/webapp.bicep
           parameters:
             projectName=${{ inputs.short_name }}
             environment=${{ inputs.environment }}
