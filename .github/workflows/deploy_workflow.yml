@@ -11,7 +11,7 @@ on:
 jobs:
 
   deploy:
-    uses: ./.github/workflows/deploy_inference_env.yml
+    uses: ./.github/workflows/deploy_reusable.yml
     if: github.ref == 'refs/heads/main'
     with:
       short_name: sgs-shiny
