@@ -25,10 +25,6 @@ on:
     secrets:
       azure_credentials:
         required: true
-      api_username: 
-        required: true
-      api_password: 
-        required: true
       subscription_id:
         required: true
 
