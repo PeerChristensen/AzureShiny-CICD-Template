@@ -47,13 +47,10 @@ jobs:
           resourceGroupName: ${{ inputs.resource_group }}
           template: bicep/acr.bicep
           parameters:
-            projectName=${{ inputs.short_name }}
-            environment=${{ inputs.environment }}
+            acrName=${{ inputs.acr_name }}
             acrSku=Basic
             
           failOnStdErr: false
-      
-      - run: echo ${{ acrName }}
 
   build-push-container:
     name: Build and push docker image

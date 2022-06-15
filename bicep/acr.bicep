@@ -1,5 +1,4 @@
-param projectName string
-param environment string
+param acrName string
 
 @description('Provide a tier of your Azure Container Registry.')
 param acrSku string
@@ -8,7 +7,7 @@ param acrSku string
 param acrAdminUserEnabled bool = true
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-09-01' = {
-  name: replace('${projectName}-${environment}-creg', '-', '')
+  name: acrName
   location: resourceGroup().location
   sku: {
   name: acrSku
@@ -17,5 +16,3 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-09-01' =
     adminUserEnabled: acrAdminUserEnabled
   }
 }
-
-output acrName string = containerRegistry.name
