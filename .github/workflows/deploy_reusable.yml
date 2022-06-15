@@ -35,6 +35,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
+      
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.azure_credentials }}
 
       - name: Deploy bicep
         uses: azure/arm-deploy@v1
