@@ -60,6 +60,10 @@ resource appServiceApp 'Microsoft.Web/sites@2021-03-01' = {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
           value: 'false'
         }
+        {
+          name: 'WEBSITES_PORT'
+          value: '3838'
+        }
       ]
       linuxFxVersion: 'DOCKER|${dockerImageAndTag}'
     }

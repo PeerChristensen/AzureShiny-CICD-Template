@@ -126,13 +126,6 @@ jobs:
             appServicePlanSkuName=${{ inputs.vm_size }}
           failOnStdErr: false
 
-      - name: Set port
-        run: |
-          az webapp config appsettings set \
-            --resource-group ${{ inputs.resource_group}} \
-            --name ${{ inputs.short_name }}-${{ inputs.environment }}-wa \
-            --settings WEBSITES_PORT=3838
-
       - name: Azure logout
         run: |
           az logout
