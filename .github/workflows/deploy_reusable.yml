@@ -1,0 +1,136 @@
+name: Deploy environment
+
+on:
+  workflow_call:
+    inputs:
+      short_name:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+      resource_group:
+        required: true
+        type: string
+      acr_name:
+        required: true
+        type: string
+      vm_size:
+        required: true
+        type: string
+      build_number:
+        required: true
+        type: string
+
+    secrets:
+      azure_credentials:
+        required: true
+      api_username: 
+        required: true
+      api_password: 
+        required: true
+      subscription_id:
+        required: true
+
+jobs:
+  
+  deploy-acr:
+    name: Deploy ACR
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+
+      - name: Deploy bicep
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: ${{ secrets.subscription_id }}
+          resourceGroupName: ${{ inputs.resource_group }}
+          template: bicep/acr.bicep
+          parameters:
+            projectName=${{ inputs.short_name }}
+            environment=${{ inputs.environment }}
+            acrSku=Basic
+            
+          failOnStdErr: false
+      
+      - run: echo ${{ acrName }}
+
+  build-push-container:
+    name: Build and push docker image
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    needs: deploy-acr
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.azure_credentials }}
+
+      - run: |
+          export username=$(az acr credential show --name ${{ inputs.acr_name }} --query 'username' --output tsv)
+          echo "::set-output name=acr_username::$username"
+        name: 'Get ACR username'
+        id: acr_username_step
+      
+      - run: |
+          password=$(az acr credential show --name ${{ inputs.acr_name }} --query 'passwords[0].value' --output tsv)
+          echo "::set-output name=acr_password::$password"
+        name: 'Get ACR Password'
+        id: acr_password_step
+
+      - id: acr-login
+        name: 'Login to ACR'
+        uses: azure/docker-login@v1
+        with:
+          login-server: '${{ inputs.acr_name }}.azurecr.io'
+          username: ${{ steps.acr_username_step.outputs.acr_username }}
+          password: ${{ steps.acr_password_step.outputs.acr_password }}
+
+      - id: build-push-image
+        name: 'Build and push image'
+        run: |
+          full_image_name=${{ inputs.acr_name }}.azurecr.io/${{ inputs.short_name }}-${{ inputs.environment }}-image:${{ inputs.build_number }}
+          docker build -t $full_image_name \
+            -f Dockerfile . \
+            --build-arg api_username=${{ secrets.api_username }} \
+            --build-arg api_password=${{ secrets.api_password }} \
+            --build-arg build_number=${{ inputs.build_number }} 
+          docker push $full_image_name
+    
+    outputs:
+      acr_username: ${{ steps.acr_username_step.outputs.acr_username }}
+      acr_password: ${{ steps.acr_password_step.outputs.acr_password }}
+
+  deploy-webapp:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build-push-container
+    environment: ${{ inputs.environment }}
+    steps:
+      
+      - uses: actions/checkout@v2
+
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.azure_credentials }}
+
+      - name: Deploy bicep
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: ${{ secrets.subscription_id }}
+          resourceGroupName: ${{ inputs.resource_group }}
+          template: bicep/inference.bicep
+          parameters:
+            projectName=${{ inputs.short_name }}
+            environment=${{ inputs.environment }}
+            acrName=${{ inputs.acr_name}}
+            acrUsername=${{ needs.build-push-container.outputs.acr_username }}
+            acrPassword=${{ needs.build-push-container.outputs.acr_password }}
+            dockerImageAndTag=${{ inputs.acr_name }}.azurecr.io/${{ inputs.short_name }}-${{ inputs.environment }}-image:${{ inputs.build_number }}
+            appServicePlanSkuName=${{ inputs.vm_size }}
+          failOnStdErr: false
+
+      - name: Azure logout
+        run: |
+          az logout
