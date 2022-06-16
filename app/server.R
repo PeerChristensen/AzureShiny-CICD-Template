@@ -20,4 +20,11 @@ function(input, output, session) {
     points(clusters()$centers, pch = 4, cex = 4, lwd = 4)
   })
 
+  output$table1 <- renderDataTable({
+    req(input$file1)
+    print(input$file1$datapath)
+    df <- read.csv(input$file1$datapath, header=TRUE)
+    return(df)
+  })
+
 }
