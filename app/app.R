@@ -1,5 +1,6 @@
 library(shiny)
 library(shinydashboard)
+library(shinydashboardPlus)
 library(tidyverse)
 library(glue)
 library(tidymodels)
@@ -19,8 +20,17 @@ instructions1 <- "Some instructions on how to use the app should go here"
 
 ui <- dashboardPage(
   title = "DATA ANALYSIS",
-  dashboardHeader(title = span("DATA ANALYSIS", 
-                               style = "color: #00511D; font-size: 25px; font-weight:bold;font-family:LFPressSans,Arial,Verdana,sans-serif;")),
+    dashboardHeader(
+      title = fluidRow(column(3),column(9,
+        span(img(height = 40, width = 180, src = "logo-seges.png"))))
+      )
+    #  title = span(img(src="logo-seges.png",width="225",height="50"
+     #                  )))
+      
+    ,
+  #dashboardHeader(title = tags$a(tags$img(src="logo-seges.png"))),
+  #dashboardHeader(title = span("DATA ANALYSIS", 
+  #                             style = "color: #00511D; font-size: 25px; font-weight:bold;font-family:LFPressSans,Arial,Verdana,sans-serif;")),
   dashboardSidebar(collapsed = F,
                    sidebarMenu(
                      menuItem("HOME", tabName = "home", icon = icon("home"), selected = T),
@@ -36,7 +46,8 @@ ui <- dashboardPage(
   dashboardBody(
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css", href = "mytheme.css"),
-      tags$style("h2 {color:#555555;}; h4 {color:#555555;}; p {color:#555555;}")
+      tags$style("h2 {color:#555555;}; h4 {color:#555555;}; p {color:#555555;}"),
+      tags$style(type = "text/css", "a{color: #00511D;}")
     ),
     #use_theme(mytheme),
     useShinyjs(),
