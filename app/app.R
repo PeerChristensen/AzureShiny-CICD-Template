@@ -43,6 +43,7 @@ ui <- dashboardPage(
     tabItems(
     tabItem(tabName = "home",
             h2("HOME"),
+            fluidRow(),
             box(
               h4("INSTRUCTIONS"),
               p(instructions1)
@@ -52,6 +53,7 @@ ui <- dashboardPage(
             box(h2("EXPERIMENT 1"),
               p("description here")
               ),
+            fluidRow(),
               box(
                 tabsetPanel(
                   tabPanel("UPLOAD DATA",
@@ -65,9 +67,11 @@ ui <- dashboardPage(
                                             selected = ","),
                                actionButton("iris1_data_go", "Go")
                              ),
+                           fluidRow(),
                            fluidRow(
                              uiOutput("validation_box")
                            ),
+                           fluidRow(),
                            fluidRow(
                              uiOutput("data_box")
                            )
@@ -83,6 +87,7 @@ ui <- dashboardPage(
                              actionButton("add_row", "Add row"),
                              textOutput("new_rows")
                            ),
+                           fluidRow(),
                            fluidRow(
                              uiOutput("new_data_box")
                            )),
@@ -93,9 +98,12 @@ ui <- dashboardPage(
                              varSelectInput("x_var", "X variable",c()),
                              varSelectInput("y_var", "Y variable",c() ),
                              actionButton("kmeansbutton", "Go"),
-                             br(),
+                             br()
+                           ),
+                           box(width=10,
                              plotOutput("kmeansplot")
-                           )),
+                           )
+                  ),
                   tabPanel("GET REPORT",
                            h2("DOWNLOAD REPORT AND DATA"),
                            box(
@@ -112,12 +120,14 @@ ui <- dashboardPage(
                 )
             ),
     tabItem(tabName = "iris2",
-            h2("IRIS"),
-            box(p("description here")),
+            box(h2("EXPERIMENT 2"),
+                p("description here")
+            ),
+            fluidRow(),
             box(
-              h2("EXPERIMENT 2"),
               tabsetPanel(
                 tabPanel("UPLOAD DATA",
+                         h2("UPLOAD DATA"),
                          box(
                            fileInput("iris2_data_input", "Upload CSV File", accept = ".csv"),
                            tags$style(".progress-bar {background-color: #00511D;}"),
@@ -173,7 +183,9 @@ server <- function(input, output, session) {
   )
   
   observeEvent(input$iris1_data_go, {
-  
+    
+    values$iris_df <- NULL
+    
     #iris1_df <-  reactive(read_delim(input$iris1_data_input$datapath, delim=input$iris1_sep))
     values$iris_df <- read_delim(input$iris1_data_input$datapath, delim=input$iris1_sep)
     

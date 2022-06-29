@@ -1,8 +1,9 @@
-FROM rocker/shiny
+FROM rocker/shiny-verse
 
 # Install system requirements for index.R as needed
 RUN apt-get update && apt-get install -y 
 
+COPY ./www/* /srv/shiny-server/www/
 COPY ./app/install_deps.R /tmp/install_deps.R
 RUN Rscript /tmp/install_deps.R
 

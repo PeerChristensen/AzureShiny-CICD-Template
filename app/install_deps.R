@@ -1,1 +1,2 @@
-install.packages(c("tidyverse", "glue", "shinyjs", "fresh", "shinydashboard"))
+install.packages(c("glue", "shinyjs", "fresh", "shinydashboard", "tidymodels"))
+
