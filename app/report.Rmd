@@ -1,0 +1,32 @@
+---
+title: "`r params$title`"
+author: "`r params$author`"
+date: "`r Sys.Date()`"
+output: html_document
+params:
+  kmeans_result: NA
+  x: NA
+  y: NA
+  title: NA
+  author: NA
+  description: NA
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+```
+
+
+### Description
+
+`r params$description`
+
+### K-means plot
+
+```{r}
+params$kmeans_result %>%
+        ggplot(aes(!!params$x, !!params$y, colour=.cluster)) +
+        geom_point(size = 2, alpha = .75) +
+        theme_minimal()
+```
+
