@@ -1,0 +1,1 @@
+install.packages(c("tidyverse", "glue", "shinyjs", "fresh", "shinydashboard"))
