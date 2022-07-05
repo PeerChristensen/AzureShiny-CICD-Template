@@ -230,7 +230,10 @@ add_rows_UI <- function(id) {
              numericInput(ns("Petal.Length"),"Petal.Length", value=0),
              numericInput(ns("Petal.Width"),"Petal.Width", value=0),
              selectInput(ns("Species"), "Species", choices = species_choices),
-             actionButton(ns("add_row"), "Add row"),
+             splitLayout(
+               actionButton(ns("add_row"), "Add row"),
+               actionButton(ns("delete_row"), "Delete last row")
+             ),
              textOutput(ns("new_rows"))
            ),
            fluidRow(
@@ -272,6 +275,17 @@ add_rows_server <- function(id, values) {
     
     observeEvent(input$add_row, {
       delay(ms = 1000, msg(NULL))
+    })
+    
+    observeEvent(input$delete_row, {
+      values$data <- values$data %>% 
+        #slice(1:(n() - 1))
+        head(-1)
+      
+      values$added_rows <- values$added_rows %>%
+        #slice(1:(n() - 1))
+        head(-1)
+      
     })
     
   })
