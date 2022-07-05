@@ -1,8 +1,69 @@
 
-library(shiny)
+# Modules for working with Iris data
+# new functions will need to be added to handle other datasets
+# lists of elements can be combined with append()
+# e.g. for combining logic for handling iris and titanic data based on the "dataset" variable
+
+
+# colours used for creating theme ----------------------------------------------
+
+# light <- "white"
+# medium <- "#F0F0E9"
+# dark <- "#E0E0D4"
+# green <- "#00511D" 
+# text <- "#555555"
+
+
+# sample code for downloading file from Azure blob storage with SAS token ------
+
+# library(AzureStor) # blob storage
+
+# using SAS token provided as environment variable
+# sas_token <- Sys.getenv("SAS_TOKEN")
+
+# endpoint <- storage_endpoint("STORAGE_URL", sas=sas_token)
+# container <- storage_container(endpoint, "CONTAINER_NAME")
+
+# get data from blob storage
+# storage_download(container, "SOURCE_FILE_PATH","DESTINATION_FILE_PATH",overwrite=T)
+
+# sample code for downloading file from Azure blob storage via key vault -------
+
+# library(AzureKeyVault)
+
+# make sure that these environment variables are set at runtime using e.g. a DevOps pipeline
+
+# KEYVAULT_URI <- Sys.getenv("KEYVAULTURI")
+# 
+# kv <- AzureKeyVault::key_vault(
+#   KEYVAULT_URI,
+#   tenant   = Sys.getenv("AZURE_TENANT_ID"),
+#   app      = Sys.getenv("AZURE_CLIENT_ID"),
+#   password = Sys.getenv("AZURE_CLIENT_SECRET")
+# )
+
+#BLOBACCESSKEY     <- kv$secrets$get("BLOBACCESSKEY")$value
+
+# endpoint is accessed with the blob access key. 
+# endpoint  <- storage_endpoint(storage_account, key = BLOBACCESSKEY)
+# The rest is the same as in the above example
+
+# Data and other variables -----------------------------------------------------
+
+items <- read_csv("items.csv") %>% distinct()
+items$id <- str_replace_all(paste0("ExpID_", items$dataset, "_", items$experiment)," ","")
 
 columns <- names(iris)
 species_choices <- unique(iris$Species)
+
+dataset_choices <- c("IRIS","TITANIC")
+
+instructions <- "How to use this app.."
+
+# create sidebar menu items and subitems ------------------------------------
+# e.g.sidebarMenu(
+#   menuItem("IRIS", tabName = "iris", icon = icon("leaf"),
+#         menuSubItem('EXPERIMENT 1', tabName = 'iris1'), ...), ...)
 
 create_menu_items <- function(x) {
   
@@ -20,9 +81,14 @@ create_menu_items <- function(x) {
         menuItem(text = x, do.call(tagList, sub_menu_list))
       }
     )
-    sidebarMenu(menu_list)
+    sidebarMenu(menuItem("HOME", tabName = "home"),
+                menu_list,
+                menuItem("NEW EXPERIMENT", tabName = "new"))
   })
 }
+
+# Create tab items -----------------------------------------------------
+# e.g.  tabItems(tabItem(tabName, header, tabUI), ...)
 
 create_tab_items <- function(x) {
   
@@ -38,14 +104,22 @@ create_tab_items <- function(x) {
       )
       
     })
+    home_tab <- tabItem(tabName = "home",
+      h2("INSTRUCTIONS"),
+      fluidRow(),
+      box(
+        p(instructions)
+        )
+      )
+    
+    new_tab <- tabItem(tabName = "new",h2("NEW EXPERIMENT"),tabUI_new("new"))
+
+    tabs <- append(list(home_tab,new_tab), tabs)
     do.call(tabItems, tabs)
-    # tabItems(
-    #     tabItem(tabName = "ExpID_iris_exp1",h2("exp 1"), p("hello1")),
-    #     tabItem(tabName = "ExpID_iris_exp2",h2("exp 2"), p("hello2"))
-    #     )
   })
 }
 
+# Create content tabs -----------------------------------------------------
 
 tabUI <- function(id) {
   ns <- NS(id)
@@ -56,6 +130,7 @@ tabUI <- function(id) {
     get_report_UI(ns(id))
   )
 }
+
 
 tabServer <- function(id, values) {
   moduleServer(id, function(input, output, session) {
@@ -73,6 +148,44 @@ tabServer <- function(id, values) {
     get_report_server(id,values)
   })
 }
+
+# Create new experiments -----------------------------------------------------
+
+tabUI_new <- function(id) {
+  ns <- NS(id)
+  
+  h2("NEW EXPERIMENT")
+  fluidRow()
+  box(
+    textInput(ns("new_exp_name"), "Experiment name"),
+    selectInput(ns("new_exp_data"), "Dataset",choices = dataset_choices),
+    splitLayout(actionButton(ns("new_exp_go"), "GO"),
+    actionButton(ns("reload"), "Reload app"))
+  )
+}
+
+tabServer_new <- function(id, values) {
+  moduleServer(id, function(input, output, session) {
+    
+    ns <- session$ns
+    observeEvent(input$new_exp_go, {
+      
+      dataset <- input$new_exp_data
+      experiment <- input$new_exp_name
+      id <- str_replace_all(paste0("ExpID_", dataset, "_", experiment)," ","")
+      
+      values$items <- values$items %>% add_row(dataset,experiment,id)
+      write_csv(values$items,"items.csv")
+    })
+    
+    observeEvent(input$reload, {
+      session$reload()
+    })
+
+  })
+  }
+
+# Upload data -----------------------------------------------------
 
 upload_data_UI <- function(id) {
   
@@ -103,6 +216,8 @@ upload_data_server <- function(id, values) {
     })
   })
 }
+
+# Add data rows -----------------------------------------------------
 
 add_rows_UI <- function(id) {
   
@@ -162,6 +277,8 @@ add_rows_server <- function(id, values) {
   })
 }
 
+# Run script -----------------------------------------------------
+
 run_script_UI <- function(id) {
   
   ns <- NS(id)
@@ -208,6 +325,7 @@ run_script_server <- function(id,values) {
   })
 }
 
+# Get report -----------------------------------------------------
 
 get_report_UI <- function(id) {
   

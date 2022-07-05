@@ -11,12 +11,21 @@ RUN Rscript /tmp/install_deps.R
 RUN install2.r --error --skipinstalled \
     shiny 
 
-COPY ./app/* /srv/shiny-server/
+#COPY ./app/* /srv/shiny-server/
+COPY ./app ./app
 
-USER shiny
+# Give write read/write permission
+RUN chmod ugo+rwx /app
+
+#USER shiny
 
 EXPOSE 3838
 
 # https://stackoverflow.com/questions/66392202/run-shiny-server-on-different-port-than-3838
 
-ENTRYPOINT ["/usr/bin/shiny-server"]
+#ENTRYPOINT ["/usr/bin/shiny-server"]
+
+# run app on container start
+CMD ["R", "-e", "shiny::runApp('/app', host = '0.0.0.0', port = 3838)"]
+
+
