@@ -19,29 +19,22 @@ species_choices <- unique(iris$Species)
 instructions1 <- "Some instructions on how to use the app should go here"
 
 ui <- dashboardPage(
-  title = "DATA ANALYSIS",
+  title = "SEGES App",
     dashboardHeader(
       title = fluidRow(column(3),column(9,
         span(img(height = 40, width = 180, src = "logo-seges.png"))))
       )
-    #  title = span(img(src="logo-seges.png",width="225",height="50"
-     #                  )))
-      
     ,
-  #dashboardHeader(title = tags$a(tags$img(src="logo-seges.png"))),
-  #dashboardHeader(title = span("DATA ANALYSIS", 
-  #                             style = "color: #00511D; font-size: 25px; font-weight:bold;font-family:LFPressSans,Arial,Verdana,sans-serif;")),
   dashboardSidebar(collapsed = F,
                    sidebarMenu(
                      menuItem("HOME", tabName = "home", icon = icon("home"), selected = T),
                      menuItem("IRIS", tabName = "iris", icon = icon("leaf"),
                               menuSubItem('EXPERIMENT 1', tabName = 'iris1'),
                               menuSubItem('EXPERIMENT 2', tabName = 'iris2'),
-                              menuItemOutput("new_exp_iris"),
-                              menuSubItem("NEW EXPERIMENT", tabName = "iris_new")
+                              menuItemOutput("new_exp_iris")
                               ),
-                     menuItem("TITANIC", tabName = "titanic", icon = icon("ship"))
-                     )
+                     menuItem("TITANIC", tabName = "titanic", icon = icon("ship")),
+                     menuItem("ADD NEW", tabName = "add_new_exp", icon = icon("folder-plus"))                     )
                    ),
   dashboardBody(
     tags$head(
@@ -155,17 +148,6 @@ ui <- dashboardPage(
               )
             )
     ),
-    tabItem(tabName = "iris_new",
-              h2("IRIS"),
-              p("description here"),
-              fluidRow(
-                box(
-                  h2("NEW EXPERIMENT"),
-                  textInput("new_exp_iris_name", "Experiment name"),
-                  actionButton("new_exp_iris", "Create new experiment")
-                )
-              )
-            ),
     tabItem(tabName = "titanic",
             h2("TITANIC"),
             p("description here"),
@@ -176,7 +158,18 @@ ui <- dashboardPage(
                 actionButton("new_exp_titanic", "Create new experiment")
                 )
               )
+    ),
+    tabItem(tabName = "add_new_exp",
+            h2("ADD NEW EXPERIMENT"),
+            p("Some instructions here"),
+            fluidRow(
+              box(
+                h2("NEW EXPERIMENT"),
+                textInput("new_exp_iris_name", "Experiment name"),
+                actionButton("new_exp_iris", "Create new experiment")
+              )
             )
+    )
     )
     )
 )
@@ -199,7 +192,7 @@ server <- function(input, output, session) {
     
     #iris1_df <-  reactive(read_delim(input$iris1_data_input$datapath, delim=input$iris1_sep))
     values$iris_df <- read_delim(input$iris1_data_input$datapath, delim=input$iris1_sep)
-    
+
     # column match
     output$col_match <- renderText(
       {
