@@ -194,8 +194,13 @@ upload_data_UI <- function(id) {
   tabPanel("UPLOAD DATA",
            box(
              fileInput(ns("dataset"), "Upload CSV File", accept = ".csv"),
+             radioButtons(ns("sep"), "Separator",
+                          choices = c(Comma = ",",
+                                      Semicolon = ";"),
+                          selected = ","),
              actionButton(ns("data_go"), "Go")
            ),
+           uiOutput(ns("validation_box")),
            box(
              dataTableOutput(ns("table"))
            )
@@ -209,9 +214,28 @@ upload_data_server <- function(id, values) {
     ns <- session$ns
     observeEvent(input$data_go, {
       
-      data <- reactive(read_delim(input$dataset$datapath, delim=","))
+      data <- reactive(read_delim(input$dataset$datapath, delim=input$sep))
       output$table <- renderDataTable({data()})
       values$data <- data()
+      
+      # column match
+      output$col_match <- renderText(
+        {
+          if (identical( names(values$data), columns) ) {"Column names match"}
+          else if (!identical( names(values$data), columns) )  {"Column names do not match"}
+        })
+      
+      # missing values
+      output$missing <- renderText(
+        {glue("N rows containing missing values: {sum(!complete.cases(values$data))}") })
+      
+      output$validation_box <- renderUI(
+        fluidRow(box(
+          h4("VALIDATION"),
+          textOutput(ns("col_match")),
+          textOutput(ns("missing"))
+          )
+        ))
       
     })
   })
