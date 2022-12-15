@@ -11,7 +11,7 @@ library(fresh)
 
 
 ui <- dashboardPage(
-  title = "SEGES App",
+  title = "SEGES App test",
   dashboardHeader(
     tags$li(class = "dropdown",
             tags$style(".main-header {max-height: 75px}"),
