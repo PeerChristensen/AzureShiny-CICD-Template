@@ -19,7 +19,7 @@ jobs:
       short_name: app-ci
       environment: test
       resource_group: shiny-test-rg
-      acr_name: sgsshinytestcr
+      acr_name: shinytestcr
       vm_size: B1
       build_number: ${{ github.run_number }}
       
