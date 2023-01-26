@@ -4,8 +4,6 @@ library(shiny)
 library(shinydashboard)
 library(shinydashboardPlus)
 library(tidyverse)
-library(glue)
-library(tidymodels)
 library(shinyjs)
 library(fresh)
 
@@ -44,20 +42,6 @@ ui <- dashboardPage(
 
 server <- function(input, output, session) { 
   
-  source("modules.R") # loads data and modules
-
-  values <- reactiveValues(data = NULL, km = NULL, added_rows = NULL, items=NULL)
-  values$items <- items
-  
-  output$menu <- create_menu_items()
-  
-  output$tabs <- create_tab_items()
-  
-  tab_ui <- unlist(items$id)
-  
-  map(tab_ui,tabServer,values=values)
-  
-  tabServer_new("new",values=values)
   
 }
 

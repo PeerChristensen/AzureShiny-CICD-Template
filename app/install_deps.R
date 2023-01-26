@@ -1,4 +1,3 @@
-install.packages(c("glue", "shinyjs", "fresh", "shinydashboard",
-                   "shinydashboardPlus", "tidymodels", "AzureStor",
+install.packages(c("shinyjs", "fresh", "shinydashboard",
+                   "shinydashboardPlus", "AzureStor",
                    "AzureKeyVault"))
-

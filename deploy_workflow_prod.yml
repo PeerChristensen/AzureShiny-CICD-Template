@@ -1,9 +1,6 @@
-name: Deploy Shiny app - test
+name: Deploy Shiny app - prod
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
     branches:
       - main
