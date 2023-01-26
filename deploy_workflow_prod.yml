@@ -1,5 +1,7 @@
 name: Deploy Shiny app - prod
 
+concurrency: deploy-prod
+
 on:
   workflow_dispatch:
     branches:

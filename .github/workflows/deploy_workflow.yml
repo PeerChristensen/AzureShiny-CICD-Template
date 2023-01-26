@@ -1,5 +1,7 @@
 name: Deploy Shiny app - test
 
+concurrency: deploy-test
+
 on:
   push:
     branches:
