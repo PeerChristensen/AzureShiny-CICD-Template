@@ -1,0 +1,25 @@
+name: Deploy Shiny app - prod
+
+concurrency: deploy-prod
+
+on:
+  workflow_dispatch:
+    branches:
+      - main
+
+jobs:
+
+  deploy:
+    uses: ./.github/workflows/deploy_reusable.yml
+    if: github.ref == 'refs/heads/main'
+    with:
+      short_name: app-ci
+      environment: test
+      resource_group: shiny-test-rg
+      acr_name: shinytestcr
+      vm_size: B1
+      build_number: ${{ github.run_number }}
+      
+    secrets:
+      azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+      subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
