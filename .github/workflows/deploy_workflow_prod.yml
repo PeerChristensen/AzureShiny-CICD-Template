@@ -14,7 +14,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     with:
       short_name: app-ci
-      environment: test
+      environment: prod
       resource_group: shiny-test-rg
       acr_name: shinytestcr
       vm_size: B1
