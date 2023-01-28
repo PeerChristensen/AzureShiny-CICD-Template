@@ -57,6 +57,6 @@ jobs:
       environment: ${{ needs.vars.outputs.environment }}
       resource_group: ${{ needs.vars.outputs.resource_group }}
       kv_name: ${{ needs.vars.outputs.kv_name }}
-      webapp_name: ${{ needs.vars.outputs.short_name }}-${{ needs.vars.outputs.environment }}-wa'
+      webapp_name: ${{ needs.vars.outputs.short_name }}-${{ needs.vars.outputs.environment }}-wa
     secrets:
       azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
