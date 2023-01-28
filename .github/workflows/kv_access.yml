@@ -30,7 +30,8 @@ jobs:
           creds: ${{ secrets.azure_credentials }}
         
         # Assign identity  
-      - run: az webapp identity assign -g ${{ inputs.resource_group }} -n ${{ inputs.webapp_name }}
+      - run: |
+          az webapp identity assign -g ${{ inputs.resource_group }} -n ${{ inputs.webapp_name }}
 
         # get SP ID
       - run: |
