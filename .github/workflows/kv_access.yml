@@ -18,7 +18,7 @@ on:
     secrets:
       azure_credentials:
         required: true
-        
+
 jobs:
   access-to-kv:
     runs-on: ubuntu-latest
@@ -34,9 +34,9 @@ jobs:
 
         # get SP ID
       - run: |
-          export spID=$(az container show \
+          export spID=$(az webapp show \
             --resource-group ${{ inputs.resource_group }}  \
-            --name ${{ inputs.aci_name }} \
+            --name ${{ inputs.webapp_name }} \
             --query identity.principalId --out tsv)
           echo "::set-output name=sp_id::$spID"
         name: 'Get Service Principal (obj id)'
@@ -52,6 +52,3 @@ jobs:
             
     outputs:
       sp_id: ${{ steps.get_sp_step.outputs.rg_id_step.sp_id }}
-
-      
-

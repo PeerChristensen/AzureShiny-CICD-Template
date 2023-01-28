@@ -8,7 +8,7 @@ env:
   ACR_NAME: shinytestcr
   SHORT_NAME: shinyapp
   VM_SIZE: B1
-  KV_ACCESS: false
+  KV_ACCESS: true
 
 on:
   push:
