@@ -20,7 +20,7 @@ on:
 
 jobs:
 
-  expose-vars:
+  vars:
     runs-on: ubuntu-latest
     outputs:
       resource_group: ${{ env.RESOURCE_GROUP }}
@@ -33,7 +33,7 @@ jobs:
       - run: echo "Exposing env vars"
 
   deploy:
-    needs: expose-vars
+    needs: vars
     uses: ./.github/workflows/deploy_reusable.yml
     if: github.ref == 'refs/heads/main'
     with:
@@ -49,7 +49,7 @@ jobs:
       subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
 
   kv-access:
-    needs: [expose-vars, deploy]
+    needs: [vars, deploy]
     uses: ./.github/workflows/kv_access.yml
     if: github.ref == 'refs/heads/main' && ${{ needs.vars.outputs.kv_access }} == true
     with:

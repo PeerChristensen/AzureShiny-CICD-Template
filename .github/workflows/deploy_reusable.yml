@@ -45,7 +45,7 @@ jobs:
         uses: azure/arm-deploy@v1
         with:
           subscriptionId: ${{ secrets.subscription_id }}
-          resourceGroupName: ${{ inputs.resource_group }}
+          resourceGroupName: ${{ inputs.resource_group }}      
           template: bicep/acr.bicep
           parameters:
             acrName=${{ inputs.acr_name }}
