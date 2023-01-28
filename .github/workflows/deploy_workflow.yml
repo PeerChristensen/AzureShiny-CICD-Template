@@ -24,7 +24,7 @@ jobs:
     uses: ./.github/workflows/deploy_reusable.yml
     if: github.ref == 'refs/heads/main'
     with:
-      short_name: ${{ SHORT_NAME }}
+      short_name: $SHORT_NAME
       environment: ${{ ENVIRONMENT }}
       resource_group: ${{ RESOURCE_GROUP }}
       acr_name: ${{ ACR_NAME }}
