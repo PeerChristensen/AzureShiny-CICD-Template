@@ -9,7 +9,7 @@ env:
   SHORT_NAME: shinyapp
   VM_SIZE: B1
   KV_NAME: shiny-test-kv
-  KV_ACCESS: true
+  KV_ACCESS: false
 
 on:
   push:
