@@ -20,15 +20,27 @@ on:
 
 jobs:
 
+  expose-vars:
+    runs-on: ubuntu-latest
+    outputs:
+      resource_group: ${{ env.RESOURCE_GROUP }}
+      acr_name: ${{ env.ACR_NAME }}
+      short_name: ${{ env.SHORT_NAME }}
+      kv_name: ${{ env.KV_NAME }}
+      environment: ${{ env.ENVIRONMENT }}
+    steps:
+      - run: echo "Exposing env vars"
+
   deploy:
+    needs: vars
     uses: ./.github/workflows/deploy_reusable.yml
     if: github.ref == 'refs/heads/main'
     with:
-      short_name: $SHORT_NAME
-      environment: ${{ ENVIRONMENT }}
-      resource_group: ${{ RESOURCE_GROUP }}
-      acr_name: ${{ ACR_NAME }}
-      vm_size: ${{ VM_SIZE }}
+      short_name: ${{ needs.vars.outputs.short_name }}
+      environment: ${{ needs.vars.outputs.environment }}
+      resource_group: ${{ needs.vars.outputs.resource_group }}
+      acr_name: ${{ needs.vars.outputs.acr_name }}
+      vm_size: ${{ needs.vars.outputs.vm_size }}
       build_number: ${{ github.run_number }}
       
     secrets:
@@ -36,14 +48,14 @@ jobs:
       subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
 
   kv-access:
-    needs: deploy
+    needs: [vars, deploy]
     uses: ./.github/workflows/kv_access.yml
     if: github.ref == 'refs/heads/main' && ${{ env.KV_ACCESS }} == true
     with:
-      environment: ${{ env.ENVIRONMENT }}
-      resource_group: ${{ env.RESOURCE_GROUP }}
-      acr_name: ${{ env.ACR_NAME }}
-      webapp_name: ${{ env.SHORT_NAME }}-${{ env.ENVIRONMENT }}-wa'
+      environment: ${{ needs.vars.outputs.environment }}
+      resource_group: ${{ needs.vars.outputs.resource_group }}
+      acr_name: ${{ needs.vars.outputs.acr_name }}
+      webapp_name: ${{ needs.vars.outputs.short_name }}-${{ needs.vars.outputs.environment }}-wa'
     secrets:
       azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
       subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
