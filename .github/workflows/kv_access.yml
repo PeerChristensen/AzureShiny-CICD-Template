@@ -16,8 +16,9 @@ on:
         required: true
         type: string     
     secrets:
-      azure_credentials: ${{ secrets.azure_credentials }}
- 
+      azure_credentials:
+        required: true
+        
 jobs:
   access-to-kv:
     runs-on: ubuntu-latest
