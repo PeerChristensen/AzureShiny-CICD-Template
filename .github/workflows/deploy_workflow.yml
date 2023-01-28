@@ -28,6 +28,7 @@ jobs:
       short_name: ${{ env.SHORT_NAME }}
       kv_name: ${{ env.KV_NAME }}
       environment: ${{ env.ENVIRONMENT }}
+      kv_access: ${{ env.KV_ACCESS }}
     steps:
       - run: echo "Exposing env vars"
 
@@ -50,7 +51,7 @@ jobs:
   kv-access:
     needs: [vars, deploy]
     uses: ./.github/workflows/kv_access.yml
-    if: github.ref == 'refs/heads/main' && ${{ env.KV_ACCESS }} == true
+    if: github.ref == 'refs/heads/main' && ${{ needs.vars.outputs.kv_access }} == true
     with:
       environment: ${{ needs.vars.outputs.environment }}
       resource_group: ${{ needs.vars.outputs.resource_group }}
