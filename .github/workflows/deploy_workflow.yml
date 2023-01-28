@@ -29,6 +29,7 @@ jobs:
       kv_name: ${{ env.KV_NAME }}
       environment: ${{ env.ENVIRONMENT }}
       kv_access: ${{ env.KV_ACCESS }}
+      vm_size: ${{ env.VM_SIZE }}
     steps:
       - run: echo "Exposing env vars"
 
