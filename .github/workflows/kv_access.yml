@@ -1,0 +1,54 @@
+name: Key vault access
+
+on:
+  workflow_call:
+    inputs:
+      resource_group:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+      webapp_name:
+        required: true
+        type: string
+      kv_name:
+        required: true
+        type: string     
+ 
+jobs:
+  access-to-kv:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.azure_credentials }}
+        
+        # Assign identity  
+      - run: az webapp identity assign -g ${{ inputs.resource_group }} -n ${{ inputs.webapp_name }}
+
+        # get SP ID
+      - run: |
+          export spID=$(az container show \
+            --resource-group ${{ inputs.resource_group }}  \
+            --name ${{ inputs.aci_name }} \
+            --query identity.principalId --out tsv)
+          echo "::set-output name=sp_id::$spID"
+        name: 'Get Service Principal (obj id)'
+        id: get_sp_step
+        
+        # set kv policy
+      - run: |
+          az keyvault set-policy \
+            --name ${{ inputs.kv_name }} \
+            --resource-group ${{ inputs.resource_group }}  \
+            --object-id ${{ steps.get_sp_step.outputs.sp_id }} \
+            --secret-permissions get
+            
+    outputs:
+      sp_id: ${{ steps.get_sp_step.outputs.rg_id_step.sp_id }}
+
+      
+

@@ -2,6 +2,14 @@ name: Deploy Shiny app - test
 
 concurrency: deploy-test
 
+env:
+  ENVIRONMENT: test
+  RESOURCE_GROUP: shiny-test-rg
+  ACR_NAME: shinytestcr
+  SHORT_NAME: shinyapp
+  VM_SIZE: B1
+  KV_ACCESS: false
+
 on:
   push:
     branches:
@@ -16,13 +24,27 @@ jobs:
     uses: ./.github/workflows/deploy_reusable.yml
     if: github.ref == 'refs/heads/main'
     with:
-      short_name: app-ci
-      environment: test
-      resource_group: shiny-test-rg
-      acr_name: shinytestcr
-      vm_size: B1
+      short_name: ${{ env.SHORT_NAME }}
+      environment: ${{ env.ENVIRONMENT }}
+      resource_group: ${{ env.RESOURCE_GROUP }}
+      acr_name: ${{ env.ACR_NAME }}
+      vm_size: ${{ env.VM_SIZE }}
       build_number: ${{ github.run_number }}
       
     secrets:
       azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
       subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
+
+  kv-access:
+    needs: deploy
+    uses: ./.github/workflows/kv_access.yml
+    if: github.ref == 'refs/heads/main' && ${{ env.KV_ACCESS }} == true
+    with:
+      environment: ${{ env.ENVIRONMENT }}
+      resource_group: ${{ env.RESOURCE_GROUP }}
+      acr_name: ${{ env.ACR_NAME }}
+      webapp_name: ${{ env.SHORT_NAME }}-${{ env.ENVIRONMENT }}-wa'
+    secrets:
+      azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+      subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
+
