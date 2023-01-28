@@ -1,5 +1,3 @@
-# App using modules to handle new experiments
-
 library(shiny)
 library(shinydashboard)
 library(shinydashboardPlus)
@@ -22,8 +20,8 @@ ui <- dashboardPage(
       column(3),
       column(9,span(img(height = 55, width = 220, src = "logo-seges.png"))))
   ),
-  dashboardSidebar(collapsed = F,
-                   uiOutput("menu")
+  dashboardSidebar(collapsed = F
+  
   ),
   dashboardBody(
     tags$head(
@@ -32,10 +30,7 @@ ui <- dashboardPage(
       tags$style(type = "text/css", "a{color: #00511D;}")
     ),
     
-    useShinyjs(),
-    tabItems(
-      uiOutput("tabs")
-    )
+    useShinyjs()
   )
 )
 

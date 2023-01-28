@@ -1,4 +1,4 @@
-FROM rocker/shiny-verse
+FROM rocker/shiny-verse:4.1.3
 
 # Install system requirements for index.R as needed
 RUN apt-get update && apt-get install -y 
@@ -22,5 +22,3 @@ EXPOSE 3838
 
 # run app on container start
 CMD ["R", "-e", "shiny::runApp('/app', host = '0.0.0.0', port = 3838)"]
-
-
