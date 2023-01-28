@@ -103,13 +103,10 @@ jobs:
     needs: build-push-container
     environment: ${{ inputs.environment }}
     steps:
-      
       - uses: actions/checkout@v2
-
       - uses: azure/login@v1
         with:
           creds: ${{ secrets.azure_credentials }}
-
       - name: Deploy bicep
         uses: azure/arm-deploy@v1
         with:
