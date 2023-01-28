@@ -53,3 +53,8 @@ jobs:
             
     outputs:
       sp_id: ${{ steps.get_sp_step.outputs.rg_id_step.sp_id }}
+
+
+
+#az config set extension.use_dynamic_install=yes_without_prompt
+#az webapp auth microsoft show --name shinyapp-test-wa --resource-group shiny-test-rg
