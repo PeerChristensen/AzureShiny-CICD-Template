@@ -53,7 +53,7 @@ jobs:
   kv-access:
     needs: [vars, deploy]
     uses: ./.github/workflows/kv_access.yml
-    if: ${{ needs.vars.outputs.kv_access }} == true
+    if: ${{ needs.vars.outputs.kv_access == true }}
     with:
       environment: ${{ needs.vars.outputs.environment }}
       resource_group: ${{ needs.vars.outputs.resource_group }}
