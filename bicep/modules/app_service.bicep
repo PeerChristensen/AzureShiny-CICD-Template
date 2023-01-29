@@ -40,7 +40,7 @@ resource appServiceApp 'Microsoft.Web/sites@2021-03-01' = {
   name: appServiceAppName
   location: location
   properties: {
-    clientCertEnabled: true
+    clientCertEnabled: false
     serverFarmId: appServicePlan.id
     httpsOnly: true
     siteConfig: {
