@@ -14,6 +14,7 @@ param acrName string
 param acrUsername string
 
 @description('Password of existing ACR')
+@secure()
 param acrPassword string
 
 @description('The service plan level to use')

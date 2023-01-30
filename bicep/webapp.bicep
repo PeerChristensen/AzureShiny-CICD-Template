@@ -9,6 +9,7 @@ param acrName string
 param acrUsername string
 
 @description('Password of existing ACR')
+@aecure()
 param acrPassword string
 
 @description('Sku or machine type to use for app')
