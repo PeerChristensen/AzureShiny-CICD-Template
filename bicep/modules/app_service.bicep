@@ -71,15 +71,5 @@ resource appServiceApp 'Microsoft.Web/sites@2021-03-01' = {
     }
   }
 }
-/*
-resource AppAuthSettings 'Microsoft.Web/sites/config@2022-03-01' = {
-  name: 'authsettings'
-  kind: 'string'
-  parent: appServiceApp
-  properties: {
-    defaultProvider: 'AzureActiveDirectory'
-    enabled: true
-  }
-}
-*/
+
 output appServiceAppHostName string = appServiceApp.properties.defaultHostName
