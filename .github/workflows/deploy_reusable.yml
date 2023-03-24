@@ -67,13 +67,13 @@ jobs:
 
       - run: |
           export username=$(az acr credential show --name ${{ inputs.acr_name }} --query 'username' --output tsv)
-          echo "::set-output name=acr_username::$username"
+          echo "acr_username=$username" >> $GITHUB_OUTPUT
         name: 'Get ACR username'
         id: acr_username_step
       
       - run: |
           password=$(az acr credential show --name ${{ inputs.acr_name }} --query 'passwords[0].value' --output tsv)
-          echo "::set-output name=acr_password::$password"
+          echo "acr_password=$password" >> $GITHUB_OUTPUT
         name: 'Get ACR Password'
         id: acr_password_step
 

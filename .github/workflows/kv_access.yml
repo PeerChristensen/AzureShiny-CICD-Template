@@ -39,7 +39,7 @@ jobs:
             --resource-group ${{ inputs.resource_group }}  \
             --name ${{ inputs.webapp_name }} \
             --query identity.principalId --out tsv)
-          echo "::set-output name=sp_id::$spID"
+          echo "sp_id=$spID" >> $GITHUB_OUTPUT
         name: 'Get Service Principal (obj id)'
         id: get_sp_step
         
